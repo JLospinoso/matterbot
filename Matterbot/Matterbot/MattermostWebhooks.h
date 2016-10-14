@@ -1,7 +1,5 @@
 #pragma once
-#include <string>
 #include <cpprest/http_client.h>
-#include "Matterbot.h"
 #include "WebResponse.h"
 #include "Message.h"
 
@@ -10,7 +8,7 @@ namespace lospi {
 	{
 	public:
 		MattermostWebhooks(const std::wstring &mattermost_url,
-			const std::wstring &incoming_hook_token,
+			const std::wstring &incoming_hook_route,
 			const std::wstring &outgoing_hook_route,
 			const std::wstring &outgoing_hook_token);
 		~MattermostWebhooks();
@@ -20,7 +18,7 @@ namespace lospi {
 		void listen();
 		void die();
 	private:
-		std::wstring mattermost_url, outgoing_hook_route, outgoing_hook_token, mattermost_post_url;
+		const std::wstring outgoing_hook_route, outgoing_hook_token, incoming_hook_route;
 		web::http::client::http_client client;
 		std::atomic<bool> is_alive;
 		std::thread listener_thread;

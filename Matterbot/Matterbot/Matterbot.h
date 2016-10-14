@@ -23,7 +23,7 @@ namespace lospi {
 	class Matterbot {
 	public:
 		Matterbot(const std::wstring &mattermost_url,
-			const std::wstring &incoming_hook_token,
+			const std::wstring &incoming_hook_route,
 			const std::wstring &outgoing_hook_route,
 			const std::wstring &outgoing_hook_token);
 		~Matterbot();

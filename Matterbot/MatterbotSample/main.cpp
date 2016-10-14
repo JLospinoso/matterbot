@@ -36,12 +36,12 @@ class CustomLogger : public ILogger {
 
 int main() {
 	//TODO: Put your own routes and tokens here
-	wstring mattermost_url = L"http://192.168.1.2:8065/",		// URL to the Mattermost/Slack service
-		incoming_hook_token = L"ktjckuh9ptrnmgoiunadsitgmc",
-		outgoing_hook_route = L"http://192.168.1.3/",			// URL of the box running matterbot
-		outgoing_hook_token = L"omy7rqidk3dqdqky39yssm4bao";
+	wstring mattermost_url = L"https://hooks.slack.com",									// URL to the incoming webhook for Mattermost/Slack
+		incoming_hook_route = L"services/AAAAAAAAA/BBBBBBBBB/CCCCCCCCCCCCCCCCCCCCCCCC",		// Route 
+		outgoing_hook_route = L"http://127.0.0.1:8000/",									// URL of the box running matterbot
+		outgoing_hook_token = L"CCCCCCCCCCCCCCCCCCCCCCCC";
 	try {
-		Matterbot bot(mattermost_url, incoming_hook_token, outgoing_hook_route, outgoing_hook_token);
+		Matterbot bot(mattermost_url, incoming_hook_route, outgoing_hook_route, outgoing_hook_token);
 		bot.post_message(L"Bot is up.");
 		
 		//TODO: Add your other commands here

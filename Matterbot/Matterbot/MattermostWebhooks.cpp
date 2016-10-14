@@ -34,14 +34,14 @@ namespace {
 }
 
 MattermostWebhooks::MattermostWebhooks(const wstring &mattermost_url,
-	const wstring &incoming_hook_token,
+	const wstring &incoming_hook_route,
 	const wstring &outgoing_hook_route,
 	const wstring &outgoing_hook_token)
-	: mattermost_url(mattermost_url),
+	:
 	outgoing_hook_route(outgoing_hook_route),
 	outgoing_hook_token(outgoing_hook_token),
 	client(mattermost_url),
-	mattermost_post_url(L"hooks/" + incoming_hook_token),
+	incoming_hook_route(incoming_hook_route),
 	is_alive(true),
 	message_handler([](auto message) {
 		wclog << L"[+] Received message: " + message.get_text() << endl;
@@ -67,11 +67,24 @@ void MattermostWebhooks::post_message(const wstring &message)
 {
 	json::value body_data;
 	body_data[L"text"] = json::value::string(message);
-	auto request_task = client.request(methods::POST, mattermost_post_url, body_data);
-	try 
+
+	wstring payload(L"payload=");
+	wstringstream ss;
+	ss << body_data;
+	payload.append(uri::encode_data_string(ss.str()));
+	
+	http_request request;
+	request.set_method(methods::POST);
+	request.headers().add(L"Content-Type", L"application/x-www-form-urlencoded");
+	request.set_body(payload);
+	request.set_request_uri(incoming_hook_route);
+	auto request_task = client.request(request);
+	
+	try
 	{
 		auto response = request_task.get();
-		wclog << L"[+] Posted to Incoming Webhook: " << message << endl;
+		wclog << L"[+] Posted to Incoming Webhook: " << message << "; response: " << 
+			response.status_code() << ". " << response.body() << endl;
 	}
 	catch (http_exception e)
 	{

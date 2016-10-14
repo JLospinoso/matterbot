@@ -77,17 +77,15 @@ wstring MatterbotImpl::serve_command_from_message(const Message &message) {
 
 
 Matterbot::Matterbot(const std::wstring &mattermost_url,
-	const std::wstring &incoming_hook_token,
+	const std::wstring &incoming_hook_route,
 	const std::wstring &outgoing_hook_route,
-	const std::wstring &outgoing_hook_token) 
+	const std::wstring &outgoing_hook_token)
 	: impl(make_shared<MatterbotImpl>())
 {
 	impl->log = make_unique<StdLogger>();
-	impl->webhooks = make_unique<MattermostWebhooks>(mattermost_url, incoming_hook_token, outgoing_hook_route, outgoing_hook_token);
+	impl->webhooks = make_unique<MattermostWebhooks>(mattermost_url, incoming_hook_route, outgoing_hook_route, outgoing_hook_token);
 	impl->is_alive = true;
 	impl->webhooks->register_web_handler(bind(&MatterbotImpl::get_default_web_response, impl));
-	//Not sure why this doesn't work:
-	//impl->webhooks->register_message_handler(bind(&Matterbot::serve_command_from_message, this));
 	auto impl_copy = impl;
 	impl->webhooks->register_message_handler([impl_copy](const Message& message) {
 		return impl_copy->serve_command_from_message(message);
