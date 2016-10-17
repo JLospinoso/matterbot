@@ -23,8 +23,7 @@ Pull down matterbot from [github][1]:
 git clone git@github.com:JLospinoso/matterbot.git
 ```
 
-Open up Visual Studio _as an Administrator_ (so that you can bind to a local port
-when debugging). There are two projects in the solution:
+Open up Visual Studio. There are two projects in the solution:
 
 * Matterbot is the project containing the matterbot (static) library.
 * MatterbotSample is the project containing a sample bot
