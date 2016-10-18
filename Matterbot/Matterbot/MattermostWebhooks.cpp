@@ -3,6 +3,7 @@
 #include <cpprest/http_listener.h>
 #include <cpprest/uri.h>
 #include <future>
+#include "StdLogger.h"
 
 using namespace std;
 using namespace lospi;
@@ -14,7 +15,7 @@ namespace {
 	wstring_convert<codecvt_utf8_utf16<wchar_t>> converter;
 
 	wstring url_decode(const wstring &input) {
-		wstring ret(input);
+		auto ret(input);
 		replace(ret.begin(), ret.end(), L'+', L' ');
 		return uri::decode(ret);
 	}
@@ -23,7 +24,7 @@ namespace {
 		auto key_values = uri::split_query(query_string);
 		return Message{
 			url_decode(key_values[L"token"]) == outgoing_hook_token,
-			stol(url_decode(key_values[L"timestamp"])), //?
+			stol(url_decode(key_values[L"timestamp"])),
 			url_decode(key_values[L"channel_name"]),
 			url_decode(key_values[L"team_domain"]),
 			url_decode(key_values[L"text"]),
@@ -43,15 +44,17 @@ MattermostWebhooks::MattermostWebhooks(const wstring &mattermost_url,
 	client(mattermost_url),
 	incoming_hook_route(incoming_hook_route),
 	is_alive(true),
-	message_handler([](auto message) {
+	message_handler([](auto message)
+		{
 		wclog << L"[+] Received message: " + message.get_text() << endl;
 		return L"Message received.";
 	}),
 	web_handler([this]() {
-		wclog << L"[+] Handled web request." << endl;
+		log->info(L"Handled web request.");
 		wstring status = is_alive ? L"alive" : L"dead";
 		return WebResponse(L"<b>MattermostWebhooks is " + status + L". </b>", L"text/html");
-	})
+	}),
+	log(make_shared<StdLogger>())
 {
 }
 
@@ -65,6 +68,7 @@ MattermostWebhooks::~MattermostWebhooks()
 
 void MattermostWebhooks::post_message(const wstring &message)
 {
+	log->info(L"Posting message: " + message);
 	json::value body_data;
 	body_data[L"text"] = json::value::string(message);
 
@@ -83,38 +87,43 @@ void MattermostWebhooks::post_message(const wstring &message)
 	try
 	{
 		auto response = request_task.get();
-		wclog << L"[+] Posted to Incoming Webhook: " << message << "; response: " << 
+		wstringstream ss;
+		ss << L"Posted to Incoming Webhook: " << message << "; response: " << 
 			response.status_code() << ". " << response.body() << endl;
+		log->info(ss.str());
 	}
 	catch (http_exception e)
 	{
+		log->error(L"An exception occurred posting to incoming webhook");
 		string msg ("There was an issue when POSTing to the Incoming Webhook: ");
 		msg.append(e.what());
-		throw std::exception(e);
+		throw exception(e);
 	}
 }
 
 void MattermostWebhooks::register_message_handler(const function<wstring(const Message&)> &message_handler) 
 {
+	log->error(L"Registering a message handler.");
 	this->message_handler = message_handler;
 }
 
 void MattermostWebhooks::register_web_handler(const function<WebResponse()> &web_handler)
 {
+	log->error(L"Registering a web handler.");
 	this->web_handler = web_handler;
 }
 
 void MattermostWebhooks::listen() 
 {
 	listener_thread = thread([this]() {
-		wclog << U("[ ] Starting MattermostWebhooks listener.") << endl;
+		log->info(L"Starting MattermostWebhooks listener.");
 		http_listener listener(outgoing_hook_route);
 		try {
 			listener.open().wait();
 		}
 		catch (exception e)
 		{
-			wclog << L"[-] MattermostWebhooks encountered an exception:" << e.what() << endl;
+			log->error(L"An error occurred opening a listening port for Outgoing WebHooks");
 			cerr << e.what() << endl;
 			return;
 		}
@@ -128,6 +137,7 @@ void MattermostWebhooks::listen()
 			}
 			catch (exception e) 
 			{
+				log->error(L"Error getting web handler result.");
 				req.reply(status_codes::InternalError, e.what());
 			}
 		});
@@ -145,19 +155,25 @@ void MattermostWebhooks::listen()
 			}
 			catch (exception e)
 			{
-
+				log->error(L"Exception thrown while posting message.");
 			}
 		});
-		wclog << U("[+] MattermostWebhooks listening for Outgoing Webhooks from Mattermost.") << endl;
+		log->info(L"MattermostWebhooks listening for Outgoing Webhooks from Mattermost.");
 		while (is_alive) {
 			this_thread::sleep_for(chrono::milliseconds(500));
 		}
-		wclog << L"[ ] MattermostWebhooks going down." << endl;
+		log->info(L"MattermostWebhooks going down.");
 		listener.close();
 	});
 }
 
 void MattermostWebhooks::die() 
 {
+	log->warn(L"Matterbot got the kill signal.");
 	is_alive.exchange(false);
+}
+
+void MattermostWebhooks::set_logger(std::shared_ptr<ILogger> log)
+{
+	this->log = log;
 }

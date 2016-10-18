@@ -16,7 +16,10 @@ namespace lospi {
 		virtual ~ICommand() {};
 		virtual std::wstring get_name() = 0;
 		virtual std::wstring get_help() = 0;
-		virtual std::wstring handle_command(std::wstring team, std::wstring channel, std::wstring user, std::wstring command_text) = 0;
+		virtual std::wstring handle_command(const std::wstring &team, 
+				const std::wstring &channel, 
+				const std::wstring &user, 
+				const std::wstring &command_text) = 0;
 	};
 
 	class MatterbotImpl;
@@ -32,7 +35,7 @@ namespace lospi {
 		Matterbot(Matterbot&&) = delete;
 		Matterbot& operator=(Matterbot&&) = delete;
 
-		void set_logger(std::unique_ptr<ILogger> log);
+		void set_logger(std::shared_ptr<ILogger> log);
 		void register_command(std::shared_ptr<ICommand> command);
 		void unregister_command(std::shared_ptr<ICommand> command);
 		void post_message(const std::wstring& message);

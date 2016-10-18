@@ -4,7 +4,7 @@
 [4]: http://webhooks.us/
 [5]: https://github.com/Microsoft/cpprestsdk
 [6]: https://jlospinoso.github.io/c++/web/rest/mattermost/software/developing/2016/06/14/matterbot.html
-
+[7]: https://jlospinoso.github.io/c++/web/rest/mattermost/software/developing/ngrok/2016/10/14/matterbot-slack-ngrok.html
 
 [matterbot][1] is a framework for making Mattermost/Slack bots.
 It uses the [Webhooks][4] APIs exposed by both [Mattermost][2] and [Slack][3] to
@@ -13,7 +13,7 @@ under the hood to manage the web-layer.
 
 Getting started
 ==
-See [my blog post][6] about getting started with matterbot.
+See [my blog post][6] and the [follow up][7] about getting started with matterbot.
 
 Building an example bot
 ==
@@ -35,5 +35,3 @@ sure that version 2.8.0 is correctly installed.
 
 MatterbotSample contains one file, `main.cpp`, but it illustrates the main features
 of the library.
-
-See [my blog post][6] for much more detailed information.

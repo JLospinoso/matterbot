@@ -2,24 +2,27 @@
 #include "MattermostWebhooks.h"
 #include "StdLogger.h"
 #include "Message.h"
+#include <atomic>
+#include <map>
+#include <sstream>
+#include <functional>
 
 using namespace lospi;
 using namespace std;
 
 class lospi::MatterbotImpl {
 public:
-	std::wstring serve_command_from_message(const Message &message);
-	std::wstring get_help_string() const;
+	wstring serve_command_from_message(const Message &message);
+	wstring get_help_string() const;
 	WebResponse get_default_web_response();
 	long websites_served = 0, messages_sent = 0, commands_served = 0;
-	std::map<std::wstring, std::shared_ptr<ICommand>> commands;
-	std::unique_ptr<ILogger> log;
-	std::unique_ptr<MattermostWebhooks> webhooks;
-	std::atomic<bool> is_alive;
+	map<wstring, shared_ptr<ICommand>> commands;
+	shared_ptr<ILogger> log;
+	unique_ptr<MattermostWebhooks> webhooks;
+	atomic<bool> is_alive;
 };
 
 WebResponse MatterbotImpl::get_default_web_response() {
-	time_t now = time(0);
 	wstring contents(L"<h3>MattermostBot Status</h3>");
 	contents.append(L"<p>Web requests served: ");
 	contents.append(to_wstring(websites_served));
@@ -44,6 +47,7 @@ wstring MatterbotImpl::get_help_string() const {
 	wstring help(L"Supported commands\n===\n");
 	for (auto cmd_pair : commands) {
 		help.append(cmd_pair.second->get_help());
+		help.append(L"\n\n");
 	}
 	return help;
 }
@@ -96,8 +100,9 @@ Matterbot::Matterbot(const std::wstring &mattermost_url,
 
 Matterbot::~Matterbot() { }
 
-void Matterbot::set_logger(std::unique_ptr<ILogger> log) {
-	impl->log.swap(log);
+void Matterbot::set_logger(shared_ptr<ILogger> log) {
+	impl->log = log;
+	impl->webhooks->set_logger(log);
 }
 
 void Matterbot::register_command(shared_ptr<ICommand> command)
@@ -110,7 +115,7 @@ void Matterbot::unregister_command(shared_ptr<ICommand> command)
 	impl->commands.erase(command->get_name());
 }
 
-void Matterbot::post_message(const std::wstring& message) {
+void Matterbot::post_message(const wstring& message) {
 	impl->webhooks->post_message(message);
 	impl->messages_sent++;
 }

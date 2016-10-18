@@ -2,8 +2,10 @@
 #include <cpprest/http_client.h>
 #include "WebResponse.h"
 #include "Message.h"
+#include "Matterbot.h"
 
 namespace lospi {
+
 	class MattermostWebhooks
 	{
 	public:
@@ -17,6 +19,7 @@ namespace lospi {
 		void register_web_handler(const std::function<WebResponse()> &web_handler);
 		void listen();
 		void die();
+		void set_logger(std::shared_ptr<ILogger> log);
 	private:
 		const std::wstring outgoing_hook_route, outgoing_hook_token, incoming_hook_route;
 		web::http::client::http_client client;
@@ -24,5 +27,6 @@ namespace lospi {
 		std::thread listener_thread;
 		std::function<std::wstring(const Message&)> message_handler;
 		std::function<WebResponse()> web_handler;
+		std::shared_ptr<ILogger> log;
 	};
 }
