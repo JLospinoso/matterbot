@@ -12,11 +12,11 @@ using namespace lospi;
 using utility::string_t;
 
 int main() {
-	string_t mattermost_url = _XPLATSTR("https://hooks.slack.com"),
-		incoming_hook_route = _XPLATSTR("services/AAAAAAA/BBBBBBBBB/CCCCCCCCCCCCCCCCCCCC"),
-		outgoing_hook_route = _XPLATSTR("http://127.0.0.1:8000/"),
-		outgoing_hook_token = _XPLATSTR("XXXXXXXXXXXXXXXXXXXXX"),
-		welcome_message = _XPLATSTR("bot is running.");
+	string_t mattermost_url = U("https://hooks.slack.com"),
+		incoming_hook_route = U("services/AAAAAAA/BBBBBBBBB/CCCCCCCCCCCCCCCCCCCC"),
+		outgoing_hook_route = U("http://127.0.0.1:8000/"),
+		outgoing_hook_token = U("XXXXXXXXXXXXXXXXXXXXX"),
+		welcome_message = U("bot is running.");
 
 	try {
 		auto bot = make_shared<Matterbot>(mattermost_url, incoming_hook_route, outgoing_hook_route, outgoing_hook_token);
@@ -27,12 +27,12 @@ int main() {
 		string_t console;
 		ucout << ">> Type \'quit\' to quit. Any other input will be sent to the bot." << endl;
 		while (getline(ucin, console)) {
-			if (_XPLATSTR("quit") == console)
+			if (U("quit") == console)
 			{
 				ucout << ">> Quitting." << endl;
 				return ERROR_SUCCESS;
 			}
-			if (_XPLATSTR("") != console)
+			if (U("") != console)
 			{
 				bot->post_message(console);
 			}

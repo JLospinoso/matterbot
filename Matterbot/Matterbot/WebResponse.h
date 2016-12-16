@@ -6,7 +6,7 @@ namespace lospi {
 	class WebResponse {
 	public:
 		WebResponse();
-		WebResponse(const utility::string_t &content, const utility::string_t &content_type = _XPLATSTR("text/html"));
+		WebResponse(const utility::string_t &content, const utility::string_t &content_type = U("text/html"));
 		utility::string_t get_content_type() const;
 		utility::string_t get_content() const;
 	private:

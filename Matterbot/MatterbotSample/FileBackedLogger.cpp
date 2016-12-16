@@ -18,15 +18,15 @@ FileBackedLogger::FileBackedLogger(string file_name) : file(file_name)
 }
 
 void FileBackedLogger::info(const string_t &msg) {
-	write(_XPLATSTR("INFO"), msg);
+	write(U("INFO"), msg);
 }
 
 void FileBackedLogger::warn(const string_t &msg) {
-	write(_XPLATSTR("WARN"), msg);
+	write(U("WARN"), msg);
 }
 
 void FileBackedLogger::error(const string_t &msg) {
-	write(_XPLATSTR("ERROR"), msg);
+	write(U("ERROR"), msg);
 }
 
 void FileBackedLogger::write(const string_t &type, const string_t &msg)
@@ -35,7 +35,7 @@ void FileBackedLogger::write(const string_t &type, const string_t &msg)
 	auto t = time(nullptr);
 	auto buffer = localtime(&t);
 	stringstream_t ss;
-	ss << put_time(buffer, _XPLATSTR("%d-%m-%Y %H-%M-%S ")) << type << _XPLATSTR(" ") << msg << endl;
+	ss << put_time(buffer, U("%d-%m-%Y %H-%M-%S ")) << type << U(" ") << msg << endl;
 	auto log_message = ss.str();
 	ucout << log_message;
 	file << log_message;

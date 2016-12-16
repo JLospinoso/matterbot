@@ -26,31 +26,31 @@ public:
 };
 
 WebResponse MatterbotImpl::get_default_web_response() {
-	string_t contents(_XPLATSTR("<h3>MattermostBot Status</h3>"));
-	contents.append(_XPLATSTR("<p>Web requests served: "));
+	string_t contents(U("<h3>MattermostBot Status</h3>"));
+	contents.append(U("<p>Web requests served: "));
 	contents.append(to_string_t(to_string(websites_served)));
-	contents.append(_XPLATSTR("</p><p>Messages posted: "));
+	contents.append(U("</p><p>Messages posted: "));
 	contents.append(to_string_t(to_string(messages_sent)));
-	contents.append(_XPLATSTR("</p><p>Commands served: "));
+	contents.append(U("</p><p>Commands served: "));
 	contents.append(to_string_t(to_string(commands_served)));
-	contents.append(_XPLATSTR("</p><h5>Supported commands:</h5><ul>"));
+	contents.append(U("</p><h5>Supported commands:</h5><ul>"));
 
 	for (auto cmd_pair : commands) {
-		contents.append(_XPLATSTR("<li>"));
+		contents.append(U("<li>"));
 		contents.append(cmd_pair.first);
-		contents.append(_XPLATSTR("</li>"));
+		contents.append(U("</li>"));
 	}
-	contents.append(_XPLATSTR("</ul>"));
+	contents.append(U("</ul>"));
 
 	websites_served++;
-	return WebResponse(contents, _XPLATSTR("text/html"));
+	return WebResponse(contents, U("text/html"));
 }
 
 string_t MatterbotImpl::get_help_string() const {
-	string_t help(_XPLATSTR("Supported commands\n===\n"));
+	string_t help(U("Supported commands\n===\n"));
 	for (auto cmd_pair : commands) {
 		help.append(cmd_pair.second->get_help());
-		help.append(_XPLATSTR("\n\n"));
+		help.append(U("\n\n"));
 	}
 	return help;
 }
@@ -58,7 +58,7 @@ string_t MatterbotImpl::get_help_string() const {
 string_t MatterbotImpl::serve_command_from_message(const Message &message) {
 	commands_served++;
 	if (!message.token_is_valid()) {
-		return _XPLATSTR("Invalid token provided for command.");
+		return U("Invalid token provided for command.");
 	}
 	stringstream_t text_ss(message.get_text());
 	string_t trigger_word, command_string, arguments;
@@ -77,7 +77,7 @@ string_t MatterbotImpl::serve_command_from_message(const Message &message) {
 	auto command_pair = commands.find(command_string);
 	if (command_pair == commands.end())
 	{
-		return _XPLATSTR("Command not found: ") + command_string;
+		return U("Command not found: ") + command_string;
 	}
 	return command_pair->second->handle_command(message.get_team(), message.get_channel(), message.get_user(), arguments);
 }
@@ -126,6 +126,6 @@ void Matterbot::post_message(const string_t& message) {
 void Matterbot::update_website(const string_t& contents)
 {
 	impl->webhooks->register_web_handler([contents]() {
-		return WebResponse(contents, _XPLATSTR("text/html"));
+		return WebResponse(contents, U("text/html"));
 	});
 }
