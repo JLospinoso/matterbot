@@ -6,7 +6,6 @@ set (Matterbot_SOURCES
 	WebResponse.cpp
 )
 set (Matterbot_HEADERS
-	ICommand.h
 	Matterbot.h
 	MattermostWebhooks.h
 	Message.h

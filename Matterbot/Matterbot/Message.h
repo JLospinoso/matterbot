@@ -1,21 +1,22 @@
 #pragma once
 #include <string>
+#include <cpprest/asyncrt_utils.h>
 
 namespace lospi {
 	class Message {
 	public:
 		Message();
-		Message(const bool &valid_token, const long &timestamp, const std::wstring &channel, const std::wstring &team,
-			const std::wstring &text, const std::wstring &user, const std::wstring &trigger_word);
+		Message(const bool &valid_token, const long &timestamp, const utility::string_t &channel, const utility::string_t &team,
+			const utility::string_t &text, const utility::string_t &user, const utility::string_t &trigger_word);
 		bool token_is_valid() const;
 		long get_timestamp() const;
-		std::wstring get_channel() const;
-		std::wstring get_team() const;
-		std::wstring get_text() const;
-		std::wstring get_user() const;
-		std::wstring get_trigger_word() const;
+		utility::string_t get_channel() const;
+		utility::string_t get_team() const;
+		utility::string_t get_text() const;
+		utility::string_t get_user() const;
+		utility::string_t get_trigger_word() const;
 	private:
-		std::wstring channel, team, text, user, trigger_word;
+		utility::string_t channel, team, text, user, trigger_word;
 		long timestamp;
 		bool valid_token;
 	};
