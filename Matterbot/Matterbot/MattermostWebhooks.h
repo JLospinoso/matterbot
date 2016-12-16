@@ -1,4 +1,5 @@
 #pragma once
+#include <thread>
 #include <cpprest/http_client.h>
 #include "WebResponse.h"
 #include "Message.h"
