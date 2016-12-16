@@ -9,13 +9,14 @@
 
 using namespace std;
 using namespace lospi;
+using utility::string_t;
 
 int main() {
-	wstring mattermost_url = L"https://hooks.slack.com",
-		incoming_hook_route = L"services/AAAAAAA/BBBBBBBBB/CCCCCCCCCCCCCCCCCCCC",
-		outgoing_hook_route = L"http://127.0.0.1:8000/",
-		outgoing_hook_token = L"XXXXXXXXXXXXXXXXXXXXX",
-		welcome_message = L"bot is running.";
+	string_t mattermost_url = U("https://hooks.slack.com"),
+		incoming_hook_route = U("services/AAAAAAA/BBBBBBBBB/CCCCCCCCCCCCCCCCCCCC"),
+		outgoing_hook_route = U("http://127.0.0.1:8000/"),
+		outgoing_hook_token = U("XXXXXXXXXXXXXXXXXXXXX"),
+		welcome_message = U("bot is running.");
 
 	try {
 		auto bot = make_shared<Matterbot>(mattermost_url, incoming_hook_route, outgoing_hook_route, outgoing_hook_token);
@@ -23,15 +24,15 @@ int main() {
 		bot->register_command(make_shared<EchoCommand>());
 		bot->post_message(welcome_message);
 
-		wstring console;
-		wclog << ">> Type \'quit\' to quit. Any other input will be sent to the bot." << endl;
-		while (getline(wcin, console)) {
-			if (L"quit" == console)
+		string_t console;
+		ucout << ">> Type \'quit\' to quit. Any other input will be sent to the bot." << endl;
+		while (getline(ucin, console)) {
+			if (U("quit") == console)
 			{
-				wclog << ">> Quitting." << endl;
+				ucout << ">> Quitting." << endl;
 				return ERROR_SUCCESS;
 			}
-			if (L"" != console)
+			if (U("") != console)
 			{
 				bot->post_message(console);
 			}
@@ -39,7 +40,7 @@ int main() {
 	}
 	catch (exception e)
 	{
-		wcerr << "[-] Unhandled exception:" << e.what() << endl;
+		ucerr << "[-] Unhandled exception:" << e.what() << endl;
 		return ERROR_FAILURE;
 	}
 }
