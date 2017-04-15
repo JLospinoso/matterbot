@@ -30,7 +30,7 @@ Open up Visual Studio. There are two projects in the solution:
 
 Both libraries require that NuGet has successfully installed the C++ REST SDK.
 Right click on "References" > "Manage NuGet Packages" > "Installed" and make
-sure that version 2.8.0 is correctly installed.
+sure that version 2.9.0 is correctly installed.
 
 MatterbotSample contains one file, `main.cpp`, but it illustrates the main features
 of the library.
