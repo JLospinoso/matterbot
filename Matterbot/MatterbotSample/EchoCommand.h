@@ -3,8 +3,7 @@
 
 namespace lospi
 {
-	class EchoCommand : public ICommand {
-	public:
+	struct EchoCommand : ICommand {
 		std::wstring get_name() override {
 			return L"echo";
 		}
